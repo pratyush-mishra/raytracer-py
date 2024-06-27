@@ -1,7 +1,18 @@
-from vector import Vec3, unit_vector
+from vector import Vec3, unit_vector, dot, cross
 from ray import Ray
 
+def hit_sphere(centre:Vec3, radius:float, ray:Ray) -> bool:
+    oc = centre - ray.orig
+    a = dot(ray.dir, ray.dir)
+    b = -2 * dot(ray.dir, oc)
+    c = dot(oc, oc) - radius*radius
+    discriminant = b*b - 4*a*c
+    return True if discriminant >= 0 else False
+
 def ray_colour(r:Ray) -> Vec3:
+    if hit_sphere(Vec3(0,0,1), 0.5, r) == True:
+        return Vec3(1,0,0)
+
     unit_direction = unit_vector(r.dir)
     a = 0.5 * (unit_direction.y + 1.0)
     return Vec3(1.0,1.0,1.0) * (1.0-a) + Vec3(0.5,0.7,1.0) * a
@@ -34,7 +45,7 @@ viewport_upper_left = camera_centre - Vec3(0,0,focal_length) - viewport_u/2 - vi
 pixel00_loc = viewport_upper_left + (pixel_delta_u + pixel_delta_v) * 0.5 
 
 #render
-with open('ray.ppm', 'w') as f:
+with open('sphere.ppm', 'w') as f:
     f.write("P3\n{image_width} {image_height}\n255\n".format(image_width=image_width, image_height=image_height))
 
     for j in range(image_height):
